@@ -20,11 +20,13 @@
   "dependencies": {},
   "devDependencies": {
     "@types/chai": "^4.2.5",
+    "@types/chai-as-promised": "^7.1.2",
     "@types/mocha": "^5.2.7",
     "@types/node": "^10.14.8",
     "@typescript-eslint/eslint-plugin": "^2.9.0",
     "@typescript-eslint/parser": "^2.9.0",
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "mocha": "^6.2.2",
     "nyc": "^14.1.1",
     "ts-node": "^7.0.1",
