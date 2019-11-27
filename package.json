@@ -1,0 +1,19 @@
+{
+  "name": "android-analysis-toolkit",
+  "version": "1.0.0",
+  "description": "A toolkit to simplify analysis, decompiler/recompile, and manipulation of Android applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "android",
+    "analysis",
+    "decompile",
+    "recompile",
+    "frida"
+  ],
+  "author": "Damien Villeneuve",
+  "license": "ISC",
+  "dependencies": {}
+}
