@@ -5,6 +5,7 @@ import CharlesCertificate from "../certificate/charlesCertificate";
 import FileFetcher from "../utils/fileFetcher";
 import Certificate from "../certificate/certificate";
 import FileCertificate from "../certificate/fileCertificate";
+import Logger from "../logger/logger";
 
 export default class MitmModule implements Module {
     private readonly fileFetcher: FileFetcher;
@@ -19,17 +20,19 @@ export default class MitmModule implements Module {
 
     apply(commander: Command): void {
         commander
-            .command("mitm-install-cert")
-            .description("Install the given PEM certificate as a system certificate on the device")
+            .command("mitm-install-cert <source>")
+            .description("Install a PEM certificate as a system certificate on the device from a given <source> (Can be: file, charles)")
             .option("-d, --device <serial>", "Device serial id", null)
-            .option("-s, --source <source> [options]", "Source of PEM certificate. Can be: file, charles")
             .option("-p, --path <path>", "Path to PEM certificate in case of 'file' source")
-            .action((options: MitmInstallCertParams) => {
+            .action((source: SourceType, options: MitmInstallCertParams) => {
                 let certificate: Certificate;
-                if (options.source === "charles") {
+                if (source === "charles") {
                     certificate = new CharlesCertificate(this.fileFetcher);
-                } else if (options.source === "file") {
+                } else if (source === "file") {
                     certificate = new FileCertificate(options.path);
+                } else {
+                    Logger.error("Source must be one of : file, charles");
+                    return;
                 }
 
                 console.info("Installing certificate as system");
@@ -39,10 +42,16 @@ export default class MitmModule implements Module {
                 certificate.extractCertificate()
                     .then(path => certificate.computeHash(path)
                         .catch(reason => console.error(`Unable to compute certificate hash : ${reason}`))
-                        .then(hash => adb.root()
-                            .then(() => adb.shell("mount -o rw,remount /system"))
-                            .then(() => adb.pushFile(path, `/system/etc/security/cacerts/${hash}.0`, 644))
-                            .then(() => adb.reboot())))
+                        .then(hash => {
+                                Logger.debug("Installing certificate %s with hash %s", path, hash);
+
+                                return adb.root()
+                                    .then(() => adb.shell("mount -o rw,remount /system"))
+                                    .then(() => adb.pushFile(path, `/system/etc/security/cacerts/${hash}.0`, 644))
+                                    .then(() => adb.reboot());
+                            }
+                        )
+                    )
                     .catch(reason => console.error(`Unable to install certificate : ${reason}`));
             });
     }

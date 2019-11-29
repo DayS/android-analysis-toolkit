@@ -2,6 +2,7 @@ import Certificate from "./certificate";
 import exec from "../utils/process";
 import FileFetcher from "../utils/fileFetcher";
 import os from "os";
+import Logger from "../logger/logger";
 
 export default class CharlesCertificate extends Certificate {
 
@@ -23,6 +24,8 @@ export default class CharlesCertificate extends Certificate {
         } else {
             throw new Error(`${osType} not supported for automatic certificate extraction from Charles`);
         }
+
+        Logger.debug("Extracting Charles's SSL certificate");
 
         return this.fileFetcher.getOrFetch("charles.pem", () => {
             return exec(binary, "ssl", "export", this.fileFetcher.fullPath("charles.pem"));
