@@ -50,12 +50,20 @@ export default class FridaServer {
     public retrieveRelease(version: string, cpuAbi: string) {
         Logger.debug(`Retrieving Frida server ${version} for ${cpuAbi}`);
 
+        cpuAbi = this.filterCpuAbi(cpuAbi);
+
+        return this.fileFetcher.getOrFetch(`${version}/${cpuAbi}/frida-server`, () => {
+            return this.downloadAndExtractRelease(version, cpuAbi);
+        });
+    }
+
+    private downloadAndExtractRelease(version: string, cpuAbi: string): Promise<string> {
         const url = `https://github.com/frida/frida/releases/download/${version}/frida-server-${version}-android-${cpuAbi}.xz`;
 
-        return this.fileFetcher.getOrFetch(`${version}/${cpuAbi}/frida-server`, (fullPath) => {
-            return this.fileFetcher.downloadFile(url, `${fullPath}.xz`);
-        }).then(xzPath => exec("xz", "-d", xzPath)
-            .then(() => xzPath.replace(/\.zx$/i, "")));
+        return this.fileFetcher.getOrFetch(`${version}/${cpuAbi}/frida-server.xz`, (fullPath) => this.fileFetcher.downloadFile(url, fullPath))
+            .then(xzPath => exec("xz", "-d", xzPath)
+                .then(() => xzPath.replace(/\.zx$/i, ""))
+            );
     }
 
     public install(localPath: string, remotePath: string): Promise<string> {
@@ -76,6 +84,13 @@ export default class FridaServer {
         return this.adb.shell("ps -A | grep frida-server")
             .then(result => result.split(/\s+/)[1])
             .catch(() => null);
+    }
+
+    private filterCpuAbi(cbuAbi: string): string {
+        if (cbuAbi.startsWith("arm64")) {
+            return "arm64";
+        }
+        return cbuAbi;
     }
 
 }

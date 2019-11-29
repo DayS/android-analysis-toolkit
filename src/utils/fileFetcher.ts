@@ -28,7 +28,7 @@ export default class FileFetcher {
      * @param relativePath
      * @param fetchPromiseFactory
      */
-    public async getOrFetch(relativePath: string, fetchPromiseFactory: (fullPath: string) => Promise<string>): Promise<string> {
+    public getOrFetch(relativePath: string, fetchPromiseFactory: (fullPath: string) => Promise<string>): Promise<string> {
         const cachedFile = this.fullPath(relativePath);
         const cachedFileFolder = path.dirname(cachedFile);
 
@@ -36,7 +36,7 @@ export default class FileFetcher {
 
         try {
             fs.accessSync(cachedFile, fs.constants.F_OK);
-            return cachedFile;
+            return Promise.resolve(cachedFile);
         } catch (err) {
             fs.mkdirSync(cachedFileFolder, {recursive: true});
         }
