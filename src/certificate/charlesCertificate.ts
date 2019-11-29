@@ -2,7 +2,7 @@ import Certificate from "./certificate";
 import exec from "../utils/process";
 import FileFetcher from "../utils/fileFetcher";
 
-export default class Charles extends Certificate {
+export default class CharlesCertificate extends Certificate {
 
     private readonly fileFetcher: FileFetcher;
 
@@ -11,7 +11,7 @@ export default class Charles extends Certificate {
         this.fileFetcher = fileFetcher;
     }
 
-    public extractCharlesCertificate() {
+    public extractCertificate() {
         const os = require('os'); // Comes with node.js
         const osType = os.type().toLowerCase();
 
