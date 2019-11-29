@@ -24,7 +24,7 @@ export default function exec(command: string, ...args: string[]): Promise<string
                 if (code === 0) {
                     resolve(outBuffer.trim());
                 } else {
-                    reject(new Error(errBuffer.trim()));
+                    reject(new Error(errBuffer.trim() || outBuffer.trim()));
                 }
             }
         });
