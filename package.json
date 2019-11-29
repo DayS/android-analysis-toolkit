@@ -2,10 +2,10 @@
   "name": "android-analysis-toolkit",
   "version": "1.0.0",
   "description": "A toolkit to simplify analysis, decompiler/recompile, and manipulation of Android applications",
-  "main": "src/index.js",
+  "main": "build/src/index.js",
   "scripts": {
     "build": "tsc",
-    "run": "npm run build && node build/index2.js",
+    "run": "npm run build && node .",
     "test": "mocha -r ts-node/register tests/**/*.test.ts"
   },
   "keywords": [
@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/request": "^2.48.3",
+    "commander": "^4.0.1",
     "progress": "^2.0.3",
     "request": "^2.88.0"
   },
