@@ -1,6 +1,7 @@
 import Certificate from "./certificate";
 import exec from "../utils/process";
 import FileFetcher from "../utils/fileFetcher";
+import os from "os";
 
 export default class CharlesCertificate extends Certificate {
 
@@ -12,21 +13,20 @@ export default class CharlesCertificate extends Certificate {
     }
 
     public extractCertificate() {
-        const os = require('os'); // Comes with node.js
         const osType = os.type().toLowerCase();
 
         let binary: string;
-        if (osType === 'darwin') {
-            binary = '/Applications/Charles.app/Contents/MacOS/Charles'
-        } else if (osType === 'linux') {
-            binary = 'Charles'
+        if (osType === "darwin") {
+            binary = "/Applications/Charles.app/Contents/MacOS/Charles";
+        } else if (osType === "linux") {
+            binary = "Charles";
         } else {
-            throw new Error(`${osType} not supported for automatic certificate extraction from Charles`)
+            throw new Error(`${osType} not supported for automatic certificate extraction from Charles`);
         }
 
-        return this.fileFetcher.getOrFetch('charles.pem', () => {
-            return exec(binary, 'ssl', 'export', this.fileFetcher.fullPath('charles.pem'))
-        })
+        return this.fileFetcher.getOrFetch("charles.pem", () => {
+            return exec(binary, "ssl", "export", this.fileFetcher.fullPath("charles.pem"));
+        });
     }
 
 }

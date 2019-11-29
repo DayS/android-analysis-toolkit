@@ -3,13 +3,13 @@ import * as fs from "fs";
 import {homedir} from "os";
 import request from "request";
 
-const ProgressBar = require('progress');
+const ProgressBar = require("progress");
 
 export default class FileFetcher {
     private readonly basePath: string;
 
-    constructor(basePath = path.join(homedir(), '.cache')) {
-        this.basePath = basePath
+    constructor(basePath = path.join(homedir(), ".cache")) {
+        this.basePath = basePath;
     }
 
     /**
@@ -17,9 +17,9 @@ export default class FileFetcher {
      * @param relativePath
      */
     public fullPath(relativePath: string | null): string {
-        if (!relativePath) throw new Error(`Path requires a relative path.`);
+        if (!relativePath) throw new Error("Path requires a relative path.");
 
-        return path.join(this.basePath, relativePath)
+        return path.join(this.basePath, relativePath);
     }
 
     /**
@@ -37,7 +37,7 @@ export default class FileFetcher {
             fs.accessSync(cachedFile, fs.constants.F_OK);
             return cachedFile;
         } catch (err) {
-            fs.mkdirSync(cachedFileFolder, {recursive: true})
+            fs.mkdirSync(cachedFileFolder, {recursive: true});
         }
 
         return fetchPromiseFactory(cachedFile);
@@ -48,40 +48,40 @@ export default class FileFetcher {
             const file = fs.createWriteStream(dest);
             const sendReq = request.get(url);
 
-            sendReq.on('response', (response) => {
+            sendReq.on("response", (response) => {
                 if (response.statusCode !== 200) {
-                    return reject('Response status was ' + response.statusCode)
+                    return reject("Response status was " + response.statusCode);
                 }
 
-                const length = parseInt(response.headers['content-length'], 10);
-                const bar = new ProgressBar('  downloading [:bar] :rate/bps :percent :etas', {
-                    complete: '=',
-                    incomplete: ' ',
+                const length = parseInt(response.headers["content-length"], 10);
+                const bar = new ProgressBar("  downloading [:bar] :rate/bps :percent :etas", {
+                    complete: "=",
+                    incomplete: " ",
                     width: 20,
                     total: length
                 });
 
-                response.on('data', chunk => bar.tick(chunk.length));
-                response.on('end', () => console.debug('\n'))
+                response.on("data", chunk => bar.tick(chunk.length));
+                response.on("end", () => console.debug("\n"));
             });
 
-            sendReq.on('error', (err) => {
+            sendReq.on("error", (err) => {
                 fs.unlink(dest, err2 => reject(err2));
-                reject(err.message)
+                reject(err.message);
             });
 
             sendReq.pipe(file);
 
-            file.on('finish', () => {
+            file.on("finish", () => {
                 file.close();
-                resolve()
+                resolve();
             });
 
-            file.on('error', (err) => {
+            file.on("error", (err) => {
                 fs.unlink(dest, err2 => reject(err2));
-                reject(err.message)
-            })
-        })
+                reject(err.message);
+            });
+        });
     }
 
 }

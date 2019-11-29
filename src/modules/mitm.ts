@@ -14,16 +14,16 @@ export default class MitmModule implements Module {
     }
 
     public static prepare(fileFetcher: FileFetcher): MitmModule {
-        return new MitmModule(fileFetcher)
+        return new MitmModule(fileFetcher);
     }
 
     apply(commander: Command): void {
         commander
-            .command('mitm-install-cert')
-            .description('Install the given PEM certificate as a system certificate on the device')
-            .option('-d, --device <serial>', 'Device serial id')
-            .option('-s, --source <source> [options]', 'Source of PEM certificate. Can be: file, charles')
-            .option('-p, --path <path>', 'Path to PEM certificate in case of "file“ source')
+            .command("mitm-install-cert")
+            .description("Install the given PEM certificate as a system certificate on the device")
+            .option("-d, --device <serial>", "Device serial id")
+            .option("-s, --source <source> [options]", "Source of PEM certificate. Can be: file, charles")
+            .option("-p, --path <path>", "Path to PEM certificate in case of 'file' source")
             .action((options: MitmInstallCertParams) => {
                 let certificate: Certificate;
                 if (options.source === "charles") {
@@ -32,18 +32,18 @@ export default class MitmModule implements Module {
                     certificate = new FileCertificate(options.path);
                 }
 
-                console.info('Installing certificate as system');
+                console.info("Installing certificate as system");
 
-                let adb = new Adb(options.device);
+                const adb = new Adb(options.device);
 
                 certificate.extractCertificate()
                     .then(path => certificate.computeHash(path)
                         .catch(reason => console.error(`Unable to compute certificate hash : ${reason}`))
                         .then(hash => adb.root()
-                            .then(() => adb.shell('mount -o rw,remount /system'))
+                            .then(() => adb.shell("mount -o rw,remount /system"))
                             .then(() => adb.pushFile(path, `/system/etc/security/cacerts/${hash}.0`, 644))
                             .then(() => adb.reboot())))
-                    .catch(reason => console.error(`Unable to install certificate : ${reason}`))
+                    .catch(reason => console.error(`Unable to install certificate : ${reason}`));
             });
     }
 

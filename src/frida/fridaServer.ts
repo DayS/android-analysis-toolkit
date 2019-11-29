@@ -17,56 +17,56 @@ export default class FridaServer {
 
     public async resolveVersion(version: string): Promise<string> {
         if (version) {
-            if (version === 'auto') {
-                return this.client.getLocalVersion()
-            } else if (version === 'latest') {
-                return this.getLatestServerRelease()
+            if (version === "auto") {
+                return this.client.getLocalVersion();
+            } else if (version === "latest") {
+                return this.getLatestServerRelease();
             }
-            return version
+            return version;
         }
-        return this.getLatestServerRelease()
+        return this.getLatestServerRelease();
     }
 
     public getLatestServerRelease(): Promise<string> {
         return new Promise((resolve, reject) =>
-            request('https://api.github.com/repos/frida/frida/releases/latest', {
+            request("https://api.github.com/repos/frida/frida/releases/latest", {
                 headers: {
-                    'user-agent': 'CLI',
+                    "user-agent": "CLI",
                 },
-            }, (error: any, response: Response, body: any) => {
+            }, (error, response: Response, body) => {
                 if (error) {
-                    reject(error)
+                    reject(error);
                 } else if (response.statusCode === 200) {
                     const content = JSON.parse(body);
-                    resolve(content['tag_name'])
+                    resolve(content["tag_name"]);
                 }
             })
-        )
+        );
     }
 
     public retrieveRelease(version: string, cpuAbi: string) {
         const url = `https://github.com/frida/frida/releases/download/${version}/frida-server-${version}-android-${cpuAbi}.xz`;
 
         return this.fileFetcher.getOrFetch(`${version}/${cpuAbi}/frida-server`, (fullPath) => {
-            return this.fileFetcher.downloadFile(url, `${fullPath}.xz`)
-        }).then(xzPath => exec('xz', '-d', xzPath)
-            .then(() => xzPath.replace(/\.zx$/i, '')))
+            return this.fileFetcher.downloadFile(url, `${fullPath}.xz`);
+        }).then(xzPath => exec("xz", "-d", xzPath)
+            .then(() => xzPath.replace(/\.zx$/i, "")));
     }
 
     public install(localPath: string, remotePath: string): Promise<string> {
         return this.adb.root()
-            .then(() => this.adb.pushFile(localPath, remotePath, 0o755))
+            .then(() => this.adb.pushFile(localPath, remotePath, 0o755));
     }
 
     public start(remotePath: string): Promise<string> {
         return this.adb.root()
-            .then(() => this.adb.shell(remotePath))
+            .then(() => this.adb.shell(remotePath));
     }
 
     public retrievePid(): Promise<number> {
-        return this.adb.shell('ps -A | grep frida-server')
+        return this.adb.shell("ps -A | grep frida-server")
             .then(result => result.split(/\s+/)[1])
-            .catch(() => null)
+            .catch(() => null);
     }
 
 }
