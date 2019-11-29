@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "run": "npm run build && node .",
+    "watch": "tsc -w",
     "test": "mocha -r ts-node/register tests/**/*.test.ts"
   },
   "keywords": [
