@@ -8,7 +8,7 @@ const ProgressBar = require("progress");
 export default class FileFetcher {
     private readonly basePath: string;
 
-    constructor(basePath = path.join(homedir(), ".cache")) {
+    constructor(basePath = path.join(homedir(), ".aatk/cache")) {
         this.basePath = basePath;
     }
 
