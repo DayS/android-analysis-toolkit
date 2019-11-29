@@ -17,7 +17,11 @@
   ],
   "author": "Damien Villeneuve",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "@types/request": "^2.48.3",
+    "progress": "^2.0.3",
+    "request": "^2.88.0"
+  },
   "devDependencies": {
     "@types/chai": "^4.2.5",
     "@types/chai-as-promised": "^7.1.2",

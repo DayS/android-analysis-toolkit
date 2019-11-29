@@ -1,6 +1,9 @@
 import * as path from "path";
 import * as fs from "fs";
 import {homedir} from "os";
+import request from "request";
+
+const ProgressBar = require('progress');
 
 export default class FileFetcher {
     private readonly basePath: string;
@@ -38,6 +41,47 @@ export default class FileFetcher {
         }
 
         return fetchPromiseFactory(cachedFile);
+    }
+
+    public downloadFile(url: string, dest: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const file = fs.createWriteStream(dest);
+            const sendReq = request.get(url);
+
+            sendReq.on('response', (response) => {
+                if (response.statusCode !== 200) {
+                    return reject('Response status was ' + response.statusCode)
+                }
+
+                const length = parseInt(response.headers['content-length'], 10);
+                const bar = new ProgressBar('  downloading [:bar] :rate/bps :percent :etas', {
+                    complete: '=',
+                    incomplete: ' ',
+                    width: 20,
+                    total: length
+                });
+
+                response.on('data', chunk => bar.tick(chunk.length));
+                response.on('end', () => console.debug('\n'))
+            });
+
+            sendReq.on('error', (err) => {
+                fs.unlink(dest, err2 => reject(err2));
+                reject(err.message)
+            });
+
+            sendReq.pipe(file);
+
+            file.on('finish', () => {
+                file.close();
+                resolve()
+            });
+
+            file.on('error', (err) => {
+                fs.unlink(dest, err2 => reject(err2));
+                reject(err.message)
+            })
+        })
     }
 
 }
