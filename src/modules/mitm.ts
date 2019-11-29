@@ -21,7 +21,7 @@ export default class MitmModule implements Module {
         commander
             .command("mitm-install-cert")
             .description("Install the given PEM certificate as a system certificate on the device")
-            .option("-d, --device <serial>", "Device serial id")
+            .option("-d, --device <serial>", "Device serial id", null)
             .option("-s, --source <source> [options]", "Source of PEM certificate. Can be: file, charles")
             .option("-p, --path <path>", "Path to PEM certificate in case of 'file' source")
             .action((options: MitmInstallCertParams) => {

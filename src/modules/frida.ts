@@ -22,7 +22,7 @@ export default class FridaModule implements Module {
         commander
             .command("frida-install")
             .description("Install an instance of Frida server on the device")
-            .option("-d, --device <serial>", "Device serial id")
+            .option("-d, --device <serial>", "Device serial id", null)
             .option("-p, --frida-path <path>", "Path where Frida server will be installed", this.defaultRemoteFridaPath)
             .option("-v, --frida-version <version>", "Frida server's version. 'auto' for resolving with local frida instance, 'latest' or empty for downloading latest, or a specific version", "auto")
             .action((options: FridaInstallParams) => {
@@ -42,10 +42,10 @@ export default class FridaModule implements Module {
         commander
             .command("frida-start")
             .description("Start the instance of Frida server installed on the device")
-            .option("-d, --device <serial>", "Device serial id")
+            .option("-d, --device <serial>", "Device serial id", null)
             .option("-p, --frida-path <path>", "Path where Frida server has been be installed", this.defaultRemoteFridaPath)
             .action((options: FridaStartParams) => {
-                console.info("Starting Frida server");
+                console.info(`Starting Frida server from ${options.fridaPath}`);
 
                 const adb = new Adb(options.device);
                 const fridaServer = new FridaServer(this.fileFetcher, adb);
@@ -58,6 +58,7 @@ export default class FridaModule implements Module {
         commander
             .command("frida-pid")
             .description("Retrieve the running instance's PID of Frida server on device")
+            .option("-d, --device <serial>", "Device serial id", null)
             .action((options: FridaPidParams) => {
                 const adb = new Adb(options.device);
                 const fridaServer = new FridaServer(this.fileFetcher, adb);

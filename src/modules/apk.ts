@@ -11,7 +11,7 @@ export default class ApkModule implements Module {
     public apply(commander: Command): void {
         commander
             .command("apk-pull <package_name> [local_file]")
-            .option("-d, --device <serial>", "Device serial id")
+            .option("-d, --device <serial>", "Device serial id", null)
             .option("-e, --exact", "Indicate if the <package_name> should be an exact match")
             .description("Find and pull APK from the device by using his identifier")
             .action((packageName: string, localFile: string | null, options: ApkPullParams) => {
