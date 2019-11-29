@@ -36,8 +36,13 @@ export default class ApkModule implements Module {
 
                         throw Error("Unable to parse output");
                     })
-                    .then(([apkId, apkPath]) => adb.pullFile(apkPath, localFile || `${apkId}.apk`))
-                    .catch(reason => Logger.error(`Unable to pul: APK : ${reason}`));
+                    .then(([apkId, apkPath]) => {
+                        const localPath = localFile || `${apkId}.apk`;
+                        Logger.info("Found APK %s. Pulling to %s", apkId, localPath);
+
+                        return adb.pullFile(apkPath, localPath);
+                    })
+                    .catch(reason => Logger.error(`Unable to pull APK : ${reason}`));
             });
     }
 
