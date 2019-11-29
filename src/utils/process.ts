@@ -1,9 +1,12 @@
 "use strict";
 
 import {spawn} from "child_process";
+import Logger from "../logger/logger";
 
 export default function exec(command: string, ...args: string[]): Promise<string> {
     return new Promise((resolve, reject) => {
+        Logger.debug("Execute command '%s' with args %s", command, args);
+
         const childProcess = spawn(command, args);
 
         let outBuffer = "";

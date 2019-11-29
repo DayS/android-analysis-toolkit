@@ -3,6 +3,7 @@ import {Command} from "commander";
 import FileFetcher from "../utils/fileFetcher";
 import Adb from "../adb/adb";
 import FridaServer from "../frida/fridaServer";
+import Logger from "../logger/logger";
 
 export default class FridaModule implements Module {
 
@@ -26,7 +27,7 @@ export default class FridaModule implements Module {
             .option("-p, --frida-path <path>", "Path where Frida server will be installed", this.defaultRemoteFridaPath)
             .option("-v, --frida-version <version>", "Frida server's version. 'auto' for resolving with local frida instance, 'latest' or empty for downloading latest, or a specific version", "auto")
             .action((options: FridaInstallParams) => {
-                console.info("Installing Frida server");
+                Logger.info("Installing Frida server");
 
                 const adb = new Adb(options.device);
                 const fridaServer = new FridaServer(this.fileFetcher, adb);
@@ -35,8 +36,8 @@ export default class FridaModule implements Module {
                     .then((cpuAbi) => fridaServer.resolveVersion(options.fridaVersion)
                         .then((fridaVersion) => fridaServer.retrieveRelease(fridaVersion, cpuAbi))
                         .then((localFridaPath) => fridaServer.install(localFridaPath, options.fridaPath))
-                        .catch(reason => console.error(`Failed to install Frida server : ${reason}`)))
-                    .catch(reason => console.error(`Failed to resolve device CPU : ${reason}`));
+                        .catch(reason => Logger.error(`Failed to install Frida server : ${reason}`)))
+                    .catch(reason => Logger.error(`Failed to resolve device CPU : ${reason}`));
             });
 
         commander
@@ -45,14 +46,14 @@ export default class FridaModule implements Module {
             .option("-d, --device <serial>", "Device serial id", null)
             .option("-p, --frida-path <path>", "Path where Frida server has been be installed", this.defaultRemoteFridaPath)
             .action((options: FridaStartParams) => {
-                console.info(`Starting Frida server from ${options.fridaPath}`);
+                Logger.info(`Starting Frida server from ${options.fridaPath}`);
 
                 const adb = new Adb(options.device);
                 const fridaServer = new FridaServer(this.fileFetcher, adb);
 
                 fridaServer.start(options.fridaPath)
-                    .then(() => console.info("Frida server started"))
-                    .catch(reason => console.error(`Failed to start Frida server : ${reason}`));
+                    .then(() => Logger.info("Frida server started"))
+                    .catch(reason => Logger.error(`Failed to start Frida server : ${reason}`));
             });
 
         commander
@@ -65,7 +66,7 @@ export default class FridaModule implements Module {
 
                 fridaServer.retrievePid()
                     .then(pid => console.info(pid))
-                    .catch(reason => console.error(`Failed to start Fridra server : ${reason}`));
+                    .catch(reason => Logger.error(`Failed to start Fridra server : ${reason}`));
             });
     }
 

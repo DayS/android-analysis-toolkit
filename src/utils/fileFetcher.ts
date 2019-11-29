@@ -2,6 +2,7 @@ import * as path from "path";
 import * as fs from "fs";
 import {homedir} from "os";
 import request from "request";
+import Logger from "../logger/logger";
 
 const ProgressBar = require("progress");
 
@@ -31,7 +32,7 @@ export default class FileFetcher {
         const cachedFile = this.fullPath(relativePath);
         const cachedFileFolder = path.dirname(cachedFile);
 
-        console.debug(`Looking for local cached file ${cachedFile}`);
+        Logger.debug(`Looking for local cached file ${cachedFile}`);
 
         try {
             fs.accessSync(cachedFile, fs.constants.F_OK);
@@ -45,6 +46,8 @@ export default class FileFetcher {
 
     public downloadFile(url: string, dest: string): Promise<string> {
         return new Promise((resolve, reject) => {
+            Logger.debug(`Downloading file ${url} into ${dest}`);
+
             const file = fs.createWriteStream(dest);
             const sendReq = request.get(url);
 

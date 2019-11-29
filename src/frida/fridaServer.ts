@@ -3,6 +3,7 @@ import FridaClient from "./fridaClient";
 import FileFetcher from "../utils/fileFetcher";
 import exec from "../utils/process";
 import Adb from "../adb/adb";
+import Logger from "../logger/logger";
 
 export default class FridaServer {
     private readonly fileFetcher: FileFetcher;
@@ -28,7 +29,9 @@ export default class FridaServer {
     }
 
     public getLatestServerRelease(): Promise<string> {
-        return new Promise((resolve, reject) =>
+        return new Promise((resolve, reject) => {
+            Logger.debug("Resolving latest Frida server version");
+
             request("https://api.github.com/repos/frida/frida/releases/latest", {
                 headers: {
                     "user-agent": "CLI",
@@ -40,11 +43,13 @@ export default class FridaServer {
                     const content = JSON.parse(body);
                     resolve(content["tag_name"]);
                 }
-            })
-        );
+            });
+        });
     }
 
     public retrieveRelease(version: string, cpuAbi: string) {
+        Logger.debug(`Retrieving Frida server ${version} for ${cpuAbi}`);
+
         const url = `https://github.com/frida/frida/releases/download/${version}/frida-server-${version}-android-${cpuAbi}.xz`;
 
         return this.fileFetcher.getOrFetch(`${version}/${cpuAbi}/frida-server`, (fullPath) => {
@@ -54,11 +59,15 @@ export default class FridaServer {
     }
 
     public install(localPath: string, remotePath: string): Promise<string> {
+        Logger.debug(`Installing Frida server to ${remotePath}`);
+
         return this.adb.root()
             .then(() => this.adb.pushFile(localPath, remotePath, 0o755));
     }
 
     public start(remotePath: string): Promise<string> {
+        Logger.debug(`Starting Frida server from ${remotePath}`);
+
         return this.adb.root()
             .then(() => this.adb.shell(remotePath));
     }

@@ -22,7 +22,8 @@
     "@types/request": "^2.48.3",
     "commander": "^4.0.1",
     "progress": "^2.0.3",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.5",

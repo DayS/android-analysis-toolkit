@@ -1,6 +1,7 @@
 import Module from "./module";
 import {Command} from "commander";
 import Adb from "../adb/adb";
+import Logger from "../logger/logger";
 
 export default class ApkModule implements Module {
 
@@ -15,7 +16,7 @@ export default class ApkModule implements Module {
             .option("-e, --exact", "Indicate if the <package_name> should be an exact match")
             .description("Find and pull APK from the device by using his identifier")
             .action((packageName: string, localFile: string | null, options: ApkPullParams) => {
-                console.info(`Searching APK with id ${packageName}`);
+                Logger.info(`Searching APK with id ${packageName}`);
 
                 const adb = new Adb(options.device);
 
@@ -36,7 +37,7 @@ export default class ApkModule implements Module {
                         throw Error("Unable to parse output");
                     })
                     .then(([apkId, apkPath]) => adb.pullFile(apkPath, localFile || `${apkId}.apk`))
-                    .catch(reason => console.error(`Unable to pul: APK : ${reason}`));
+                    .catch(reason => Logger.error(`Unable to pul: APK : ${reason}`));
             });
     }
 
