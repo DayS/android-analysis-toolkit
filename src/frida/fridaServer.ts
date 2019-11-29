@@ -70,7 +70,7 @@ export default class FridaServer {
         Logger.debug(`Installing Frida server to ${remotePath}`);
 
         return this.adb.root()
-            .then(() => this.adb.pushFile(localPath, remotePath, 0o755));
+            .then(() => this.adb.pushFile(localPath, remotePath, 755));
     }
 
     public start(remotePath: string): Promise<string> {
