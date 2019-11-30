@@ -52,7 +52,7 @@ export default class FridaServer {
 
         cpuAbi = this.filterCpuAbi(cpuAbi);
 
-        return this.fileFetcher.getOrFetch(`${version}/${cpuAbi}/frida-server`, () => {
+        return this.fileFetcher.getOrFetch(`frida/${version}/${cpuAbi}/frida-server`, () => {
             return this.downloadAndExtractRelease(version, cpuAbi);
         });
     }
