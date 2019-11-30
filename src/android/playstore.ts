@@ -63,8 +63,8 @@ export default class Playstore {
             return this.retrieveLatestZipUrl(cpuAbi, androidVersion)
                 .then((url: string) => this.fileFetcher.downloadFile(url, fullPath));
         })
-            .then(zipPath => exec("unzip", "-o", zipPath, "Core/*", "-d", fullBasename))
-            .then(() => exec("rm", "-f", fullBasename + "/Core/setup*"))
+            .then(zipPath => execShell("unzip", "-o", zipPath, "Core/*", "-d", fullBasename))
+            .then(() => execShell("rm", "-f", fullBasename + "/Core/setup*"))
             .then(() => execShell("lzip", "-f", "-d", fullBasename + "/Core/*.lz"))
             .then(() => new Promise((resolve, reject) => {
                     fs.readdir(fullBasename + "/Core", (err, files: string[]) => {

@@ -37,9 +37,9 @@ function doExec(useShell: boolean, command: string, ...args: string[]): Promise<
  * @param args
  */
 export function execShell(command: string, ...args: string[]): Promise<string> {
-    return doExec(false, command, ...args);
+    return doExec(true, command, ...args);
 }
 
 export function exec(command: string, ...args: string[]): Promise<string> {
-    return doExec(true, command, ...args);
+    return doExec(false, command, ...args);
 }
