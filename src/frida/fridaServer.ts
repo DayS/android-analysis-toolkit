@@ -60,7 +60,7 @@ export default class FridaServer {
     private downloadAndExtractRelease(version: string, cpuAbi: string): Promise<string> {
         const url = `https://github.com/frida/frida/releases/download/${version}/frida-server-${version}-android-${cpuAbi}.xz`;
 
-        return this.fileFetcher.getOrFetch(`${version}/${cpuAbi}/frida-server.xz`, (fullPath) => this.fileFetcher.downloadFile(url, fullPath))
+        return this.fileFetcher.getOrFetch(`frida/${version}/${cpuAbi}/frida-server.xz`, (fullPath) => this.fileFetcher.downloadFile(url, fullPath))
             .then(xzPath => exec("xz", "-d", xzPath)
                 .then(() => xzPath.replace(/\.zx$/i, ""))
             );

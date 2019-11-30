@@ -27,8 +27,9 @@ export default class CharlesCertificate extends Certificate {
 
         Logger.debug("Extracting Charles's SSL certificate");
 
-        return this.fileFetcher.getOrFetch("charles.pem", () => {
-            return exec(binary, "ssl", "export", this.fileFetcher.fullPath("charles.pem"));
+        const relativePath = "certificates/charles.pem";
+        return this.fileFetcher.getOrFetch(relativePath, () => {
+            return exec(binary, "ssl", "export", this.fileFetcher.fullPath(relativePath));
         });
     }
 
