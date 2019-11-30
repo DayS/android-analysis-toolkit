@@ -2,7 +2,7 @@ import request, {Response} from "request";
 import FridaClient from "./fridaClient";
 import FileFetcher from "../utils/fileFetcher";
 import exec from "../utils/process";
-import Adb from "../adb/adb";
+import Adb from "../android/adb";
 import Logger from "../logger/logger";
 
 export default class FridaServer {

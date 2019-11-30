@@ -1,6 +1,6 @@
 import Module from "./module";
 import {Command} from "commander";
-import Adb from "../adb/adb";
+import Adb from "../android/adb";
 import CharlesCertificate from "../certificate/charlesCertificate";
 import FileFetcher from "../utils/fileFetcher";
 import Certificate from "../certificate/certificate";

@@ -1,6 +1,6 @@
 import Module from "./module";
 import {Command} from "commander";
-import Adb from "../adb/adb";
+import Adb from "../android/adb";
 import Logger from "../logger/logger";
 
 export default class ApkModule implements Module {

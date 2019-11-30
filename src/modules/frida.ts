@@ -1,7 +1,7 @@
 import Module from "./module";
 import {Command} from "commander";
 import FileFetcher from "../utils/fileFetcher";
-import Adb from "../adb/adb";
+import Adb from "../android/adb";
 import FridaServer from "../frida/fridaServer";
 import Logger from "../logger/logger";
 

@@ -42,8 +42,17 @@ export default class Adb {
         return this.shell("getprop", "ro.product.cpu.abi");
     }
 
+    public getAndroidVersion(): Promise<string> {
+        return this.shell("getprop", "ro.build.version.release")
+            .then((version: string) => version.length < 2 ? version + ".0" : version);
+    }
+
     public root(): Promise<string> {
         return this.execOnDevice("root");
+    }
+
+    public remount(): Promise<string> {
+        return this.execOnDevice("remount");
     }
 
     public reboot(): Promise<string> {
