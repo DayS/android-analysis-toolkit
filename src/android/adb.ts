@@ -29,7 +29,7 @@ export default class Adb {
         return this.execOnDevice("pull", remotePath, localPath);
     }
 
-    public pushFile(localPath: string, remotePath: string, chmod: number = 644): Promise<string> {
+    public pushFile(localPath: string, remotePath: string, chmod: number | null = null): Promise<string> {
         const pushPromise = this.execOnDevice("push", localPath, remotePath);
 
         if (chmod) {
