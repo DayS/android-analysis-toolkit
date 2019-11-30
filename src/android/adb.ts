@@ -1,4 +1,4 @@
-import exec from "../utils/process";
+import {exec} from "../utils/process";
 
 export default class Adb {
 

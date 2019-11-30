@@ -3,11 +3,11 @@
 import {spawn} from "child_process";
 import Logger from "../logger/logger";
 
-export default function exec(command: string, ...args: string[]): Promise<string> {
+function doExec(useShell: boolean, command: string, ...args: string[]): Promise<string> {
     return new Promise((resolve, reject) => {
         Logger.debug("Execute command '%s' with args %s", command, args);
 
-        const childProcess = spawn(command, args);
+        const childProcess = spawn(command, args, {shell: useShell});
 
         let outBuffer = "";
         let errBuffer = "";
@@ -29,4 +29,17 @@ export default function exec(command: string, ...args: string[]): Promise<string
             }
         });
     });
+}
+
+/**
+ * Use this method instead of {@link exec} to allow wildcard resolution in arguments
+ * @param command
+ * @param args
+ */
+export function execShell(command: string, ...args: string[]): Promise<string> {
+    return doExec(false, command, ...args);
+}
+
+export function exec(command: string, ...args: string[]): Promise<string> {
+    return doExec(true, command, ...args);
 }

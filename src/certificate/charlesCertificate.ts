@@ -1,5 +1,5 @@
 import Certificate from "./certificate";
-import exec from "../utils/process";
+import {exec} from "../utils/process";
 import FileFetcher from "../utils/fileFetcher";
 import os from "os";
 import Logger from "../logger/logger";
