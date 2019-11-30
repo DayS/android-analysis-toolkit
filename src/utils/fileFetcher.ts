@@ -77,7 +77,7 @@ export default class FileFetcher {
 
             file.on("finish", () => {
                 file.close();
-                resolve();
+                resolve(dest);
             });
 
             file.on("error", (err) => {
