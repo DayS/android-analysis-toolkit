@@ -1,3 +1,4 @@
 #!/bin/bash
 
-node . "$@"
+AATK_PWD=$(dirname $0)
+node "$AATK_PWD" "$@"
