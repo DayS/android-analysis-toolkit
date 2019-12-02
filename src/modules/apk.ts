@@ -2,11 +2,19 @@ import Module from "./module";
 import {Command} from "commander";
 import Adb from "../android/adb";
 import Logger from "../logger/logger";
+import {ApktoolFactory} from "../android/apktool";
+import FileFetcher from "../utils/fileFetcher";
+import {JadxFactory} from "../android/jadx";
 
 export default class ApkModule implements Module {
+    private fileFetcher: FileFetcher;
 
-    public static prepare(): ApkModule {
-        return new ApkModule();
+    constructor(fileFetcher: FileFetcher) {
+        this.fileFetcher = fileFetcher;
+    }
+
+    public static prepare(fileFetcher: FileFetcher): ApkModule {
+        return new ApkModule(fileFetcher);
     }
 
     public apply(commander: Command): void {
@@ -44,6 +52,23 @@ export default class ApkModule implements Module {
                     })
                     .catch(reason => Logger.error(`Unable to pull APK : ${reason}`));
             });
+
+        commander
+            .command("apk-decompile <apk_path>")
+            .description("Decompile given APK")
+            .action((apkPath: string) => {
+                Logger.info(`Decompiling APK ${apkPath}`);
+
+                const apktoolFactory = new ApktoolFactory(this.fileFetcher);
+                const jadxFactory = new JadxFactory(this.fileFetcher);
+
+                Promise.all([apktoolFactory.build("latest"), jadxFactory.build("latest")])
+                    .then(([apktool, jadx]) => apktool.decompileApk(apkPath, `${apkPath}.out`)
+                        .then(() => jadx.findAndDecompileDexFiles(`${apkPath}.out`))
+                    )
+                    .catch(reason => Logger.error(`Unable to decompile APK : ${reason}`));
+            });
+
     }
 
 }

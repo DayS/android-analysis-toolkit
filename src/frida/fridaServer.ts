@@ -1,9 +1,9 @@
-import request, {Response} from "request";
 import FridaClient from "./fridaClient";
 import FileFetcher from "../utils/fileFetcher";
 import {exec} from "../utils/process";
 import Adb from "../android/adb";
 import Logger from "../logger/logger";
+import github from "../utils/github";
 
 export default class FridaServer {
     private readonly fileFetcher: FileFetcher;
@@ -29,22 +29,7 @@ export default class FridaServer {
     }
 
     public getLatestServerRelease(): Promise<string> {
-        return new Promise((resolve, reject) => {
-            Logger.debug("Resolving latest Frida server version");
-
-            request("https://api.github.com/repos/frida/frida/releases/latest", {
-                headers: {
-                    "user-agent": "CLI",
-                },
-            }, (error, response: Response, body) => {
-                if (error) {
-                    reject(error);
-                } else if (response.statusCode === 200) {
-                    const content = JSON.parse(body);
-                    resolve(content["tag_name"]);
-                }
-            });
-        });
+        return github.retrieveLatestReleaseVersion("frida", "frida");
     }
 
     public retrieveRelease(version: string, cpuAbi: string) {

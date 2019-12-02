@@ -12,7 +12,7 @@ const fileFetcher = new FileFetcher();
 FridaModule.prepare(fileFetcher).apply(commander);
 MitmModule.prepare(fileFetcher).apply(commander);
 DeviceModule.prepare(fileFetcher).apply(commander);
-ApkModule.prepare().apply(commander);
+ApkModule.prepare(fileFetcher).apply(commander);
 
 commander
     .version("0.1.0")
