@@ -3,7 +3,7 @@ import {exec} from "../utils/process";
 import FileFetcher from "../utils/fileFetcher";
 import Logger from "../logger/logger";
 import File from "../utils/file";
-import Promises from "../utils/Promises";
+import Promises from "../utils/promises";
 
 export class Jadx {
     private readonly jadx: string;
