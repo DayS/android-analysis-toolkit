@@ -5,6 +5,7 @@ import Logger from "../logger/logger";
 import {ApktoolFactory} from "../android/apktool";
 import FileFetcher from "../utils/fileFetcher";
 import {JadxFactory} from "../android/jadx";
+import AndroidSdk from "../android/sdk";
 
 export default class ApkModule implements Module {
     private fileFetcher: FileFetcher;
@@ -69,6 +70,32 @@ export default class ApkModule implements Module {
                     .catch(reason => Logger.error(`Unable to decompile APK : ${reason}`));
             });
 
+        commander
+            .command("apk-recompile <project_path>")
+            .option("-o, --output-apk-path <outputApkPath>", "Path to APK to generate", null)
+            .option("-k, --keystore-path <keystorePath>", "Keystore to use for APK signature or use a generated one", null)
+            .option("-a, --keystore-alias <keystoreAlias>", "Keystore's alias", "aatk")
+            .option("-p, --keystore-password <keystorePassword>", "Keystore's password", "aatkpass")
+            .option("-d, --debuggable", "Make APK debuggable")
+            .description("Recompile given project into a signed APK")
+            .action((projectPath: string, options: ApkRecompileParams) => {
+                Logger.info(`Recompiling project ${projectPath} into APK`);
+
+                const apktoolFactory = new ApktoolFactory(this.fileFetcher);
+                const androidSdk = new AndroidSdk(this.fileFetcher, process.env.ANDROID_HOME);
+
+                const apkPath = options.outputApkPath || `${projectPath}.apk`;
+                const alignedApkPath = `${apkPath}-aligned.apk`;
+
+                apktoolFactory.build("latest")
+                    .then(apktool => apktool.recompileApk(projectPath, apkPath, options.debuggable))
+                    .then(() => androidSdk.retrieveKeystore(options.keystorePath, options.keystoreAlias, options.keystorePassword)
+                        .then((keystorePath) => androidSdk.signApk(apkPath, keystorePath, options.keystoreAlias, options.keystorePassword))
+                        .then(() => androidSdk.alignApk(apkPath, alignedApkPath))
+                    )
+                    .catch(reason => Logger.error(`Unable to recompile project into APK : ${reason}`));
+            });
+
     }
 
 }
@@ -76,4 +103,12 @@ export default class ApkModule implements Module {
 class ApkPullParams {
     public device: string | null;
     public exact: boolean;
+}
+
+class ApkRecompileParams {
+    public outputApkPath: string | null;
+    public keystorePath: string | null;
+    public keystoreAlias: string;
+    public keystorePassword: string;
+    public debuggable: boolean;
 }

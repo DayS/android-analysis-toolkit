@@ -41,7 +41,8 @@ export default class FileFetcher {
             fs.mkdirSync(cachedFileFolder, {recursive: true});
         }
 
-        return fetchPromiseFactory(cachedFile);
+        return fetchPromiseFactory(cachedFile)
+            .then(() => cachedFile);
     }
 
     public downloadFile(url: string, dest: string): Promise<string> {

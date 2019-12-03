@@ -18,6 +18,17 @@ export class Apktool {
         return this.exec("decode", "--force", "--output", outputPath, apkPath)
             .then(() => exec("unzip", apkPath, "classes*.dex", "-d", outputPath));
     }
+
+    public recompileApk(projectPath: string, apkPath: string, debuggable: boolean): Promise<string> {
+        const args = [];
+        if (debuggable) {
+            args.push("--debug");
+        }
+        args.push("--no-crunch", "-o", apkPath, projectPath);
+
+        return this.exec("build", ...args)
+            .then(() => apkPath);
+    }
 }
 
 export class ApktoolFactory {
